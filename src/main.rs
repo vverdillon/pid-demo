@@ -96,6 +96,7 @@ impl eframe::App for MyApp {
                 self.pendulum_draw.ui_pendulum(
                     ui,
                     1.0,
+                    self.pause,
                     200.0 * self.pendulum.length,
                     self.pendulum.alpha,
                 );

@@ -1,5 +1,5 @@
 use eframe::egui;
-use eframe::egui::{Color32, Pos2, Sense, Stroke, Ui, vec2};
+use eframe::egui::{Align2, Color32, FontId, Pos2, Sense, Stroke, Ui, vec2};
 
 /// Struct that stores pendulum elements.
 pub struct PendulumDraw {
@@ -19,6 +19,7 @@ impl PendulumDraw {
         &mut self,
         ui: &mut Ui,
         _scale: f32,
+        pause: bool,
         stick_length: f32,
         alpha: f32,
     ) -> egui::Response {
@@ -49,6 +50,22 @@ impl PendulumDraw {
 
         painter.circle(masse_coord, 10.0, red, Stroke::new(2.0, red));
         painter.circle(c, 2.0, green, Stroke::new(2.0, green));
+
+        let text_pos = rect.min + vec2(10.0, 10.0);
+        let text: &str;
+        if pause {
+            text = "Pendulum - Simulation (paused)";
+        } else {
+            text = "Pendulum - Simulation";
+        }
+
+        painter.text(
+            text_pos,
+            Align2::LEFT_TOP,
+            text,
+            FontId::proportional(14.0),
+            Color32::WHITE,
+        );
 
         response
     }
