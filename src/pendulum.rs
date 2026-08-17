@@ -1,5 +1,6 @@
 // This file simulate a simple pendulum with a certain masse and a certain couple.
 
+const PI: f32 = std::f32::consts::PI;
 const G: f32 = 9.81;
 
 #[derive(Debug, Clone, Copy)]
@@ -14,35 +15,11 @@ pub struct PendulumState {
     pub friction: f32, // friction applied on the pendulum, lambda
 }
 
-impl PendulumState {
-    fn new(
-        dt: f32,
-        alpha: f32,
-        d_alpha: f32,
-        d2_alpha: f32,
-        masse: f32,
-        length: f32,
-        torque: f32,
-        friction: f32,
-    ) -> Self {
-        Self {
-            dt,
-            alpha,
-            d_alpha,
-            d2_alpha,
-            masse,
-            length,
-            torque,
-            friction,
-        }
-    }
-}
-
 impl Default for PendulumState {
     fn default() -> Self {
         Self {
-            dt: 0.1,
-            alpha: 0.,
+            dt: 0.05,
+            alpha: PI / 4.0,
             d_alpha: 0.,
             d2_alpha: 0.,
             masse: 1.,
