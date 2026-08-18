@@ -136,6 +136,7 @@ impl eframe::App for MyApp {
                     self.pause,
                     200.0 * self.pendulum.length,
                     self.pendulum.alpha,
+                    self.goal,
                 );
             });
         });
