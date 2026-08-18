@@ -81,7 +81,7 @@ impl eframe::App for MyApp {
             ui.add(egui::Slider::new(&mut self.pendulum.friction, 0.00001..=5.0).text("friction"));
             if ui.button("Reset").clicked() {
                 self.pendulum = pendulum::PendulumState::default();
-                self.history_angles.clear();
+                self.history_angles = vec![pendulum::PendulumState::default().alpha];
                 self.history_dts.clear();
             }
 
@@ -91,7 +91,7 @@ impl eframe::App for MyApp {
 
             ui.horizontal(|ui| {
                 ui.label("Goal: ");
-                ui.add(egui::DragValue::new(&mut self.goal).speed(0.1));
+                ui.add(egui::DragValue::new(&mut self.goal).speed(0.01));
             });
 
             ui.label(format!("Actual error: {}", self.goal - self.pendulum.alpha));
