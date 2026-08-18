@@ -11,7 +11,7 @@ pub struct PendulumState {
     d2_alpha: f32,     // double derivative pendulum angle
     pub masse: f32,    // pendulum masse, m
     pub length: f32,   // pendulum length, l
-    torque: f32,       // torque applied on the pendulum, J
+    pub torque: f32,   // torque applied on the pendulum, J
     pub friction: f32, // friction applied on the pendulum, lambda
 }
 

@@ -14,6 +14,11 @@ pub struct MyApp {
     last_update: Instant,
     adapative_dt: bool,
 
+    goal: f32,
+    pid_reponse: f32,
+    history_angles: Vec<f32>,
+    history_dts: Vec<f32>,
+
     pause: bool,
 }
 
@@ -25,6 +30,10 @@ impl Default for MyApp {
             pendulum_draw: paint::PendulumDraw::default(),
             last_update: Instant::now(),
             adapative_dt: true,
+            goal: 0.,
+            pid_reponse: 0.,
+            history_angles: vec![pendulum::PendulumState::default().alpha],
+            history_dts: Vec::new(),
             pause: true,
         }
     }
@@ -41,6 +50,17 @@ impl eframe::App for MyApp {
         }
 
         if !self.pause {
+            self.history_angles.push(self.pendulum.alpha);
+            self.history_dts.push(self.pendulum.dt);
+
+            self.pid_reponse = pid::pid(
+                &self.pid,
+                self.goal,
+                &self.history_angles,
+                &self.history_dts,
+            );
+
+            self.pendulum.torque = self.pid_reponse;
             self.pendulum.next();
         }
 
@@ -61,18 +81,35 @@ impl eframe::App for MyApp {
             ui.add(egui::Slider::new(&mut self.pendulum.friction, 0.00001..=5.0).text("friction"));
             if ui.button("Reset").clicked() {
                 self.pendulum = pendulum::PendulumState::default();
+                self.history_angles.clear();
+                self.history_dts.clear();
             }
 
             ui.separator();
 
             ui.heading("PID parameters");
 
-            ui.add(egui::Slider::new(&mut self.pid.kp, 0.0..=1.0).text("Kp"));
-            ui.add(egui::Slider::new(&mut self.pid.ki, 0.0..=1.0).text("Ki"));
-            ui.add(egui::Slider::new(&mut self.pid.kd, 0.0..=1.0).text("Kd"));
+            ui.horizontal(|ui| {
+                ui.label("Goal: ");
+                ui.add(egui::DragValue::new(&mut self.goal).speed(0.1));
+            });
+
+            ui.label(format!("Actual error: {}", self.goal - self.pendulum.alpha));
+
+            ui.add(egui::Slider::new(&mut self.pid.kp, 0.0..=10.0).text("Kp"));
+            ui.add(egui::Slider::new(&mut self.pid.ki, 0.0..=10.0).text("Ki"));
+            ui.add(egui::Slider::new(&mut self.pid.kd, 0.0..=10.0).text("Kd"));
+
+            ui.horizontal(|ui| {
+                ui.label("Reponse: ");
+                ui.add(egui::DragValue::new(&mut self.pid_reponse).speed(0.1));
+            });
 
             if ui.button("Reset").clicked() {
                 self.pid = pid::PIDCfg::default();
+                self.pid_reponse = 0.0;
+                self.history_angles = vec![pendulum::PendulumState::default().alpha];
+                self.history_dts.clear();
             }
 
             ui.separator();

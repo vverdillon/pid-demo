@@ -52,11 +52,9 @@ impl PendulumDraw {
         painter.circle(c, 2.0, green, Stroke::new(2.0, green));
 
         let text_pos = rect.min + vec2(10.0, 10.0);
-        let text: &str;
+        let mut text: &str = "Pendulum - Simulation";
         if pause {
             text = "Pendulum - Simulation (paused)";
-        } else {
-            text = "Pendulum - Simulation";
         }
 
         painter.text(
